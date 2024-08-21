@@ -3,8 +3,11 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.utils.text import slugify
 
+from experimenter.projects.models import Project
+from experimenter.outcomes import Outcomes
+from experimenter.targeting.constants import NimbusTargetingConfig, TargetingConstants
 from experimenter.experiments.changelog_utils import generate_nimbus_changelog
-from experimenter.experiments.models import NimbusExperiment
+from experimenter.experiments.models import NimbusExperiment, NimbusFeatureConfig
 from experimenter.nimbus_ui_new.constants import NimbusUIConstants
 
 
@@ -89,6 +92,89 @@ class NimbusExperimentCreateForm(NimbusChangeLogFormMixin, forms.ModelForm):
         if "name" in cleaned_data:
             cleaned_data["slug"] = slugify(cleaned_data["name"])
         return cleaned_data
+
+
+class NimbusOverviewForm(NimbusChangeLogFormMixin, forms.ModelForm):
+    owner = forms.ModelChoiceField(
+        queryset=User.objects.all().order_by("email"),
+        widget=forms.widgets.Select(
+            attrs={
+                "class": "selectpicker form-control border",
+                "data-live-search": "true",
+            }
+        ),
+    )
+    name = forms.CharField(
+        widget=forms.widgets.TextInput(attrs={"class": "form-control"})
+    )
+    public_description = forms.CharField(
+        widget=forms.widgets.Textarea(attrs={"class": "form-control"})
+    )
+    hypothesis = forms.CharField(
+        widget=forms.widgets.Textarea(attrs={"class": "form-control"})
+    )
+    primary_outcomes = forms.MultipleChoiceField(
+        choices=Outcomes.all(),
+        widget=forms.widgets.SelectMultiple(
+            attrs={
+                "class": "selectpicker form-control border",
+                "data-live-search": "true",
+            }
+        ),
+    )
+    secondary_outcomes = forms.MultipleChoiceField(
+        choices=Outcomes.all(),
+        widget=forms.widgets.SelectMultiple(
+            attrs={
+                "class": "selectpicker form-control border",
+                "data-live-search": "true",
+            }
+        ),
+    )
+    projects = forms.ModelMultipleChoiceField(
+        queryset=Project.objects.all(),
+        widget=forms.widgets.SelectMultiple(
+            attrs={
+                "class": "selectpicker form-control border",
+                "data-live-search": "true",
+            }
+        ),
+    )
+    subscribers = forms.ModelMultipleChoiceField(
+        queryset=User.objects.all(),
+        widget=forms.widgets.SelectMultiple(
+            attrs={
+                "class": "selectpicker form-control border",
+                "data-live-search": "true",
+            }
+        ),
+    )
+
+    class Meta:
+        model = NimbusExperiment
+        fields = [
+            "owner",
+            "name",
+            "public_description",
+            "hypothesis",
+            "primary_outcomes",
+            "secondary_outcomes",
+            "projects",
+            "subscribers",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance:
+            application_outcome_choices = sorted(
+                (o.slug, o.friendly_name)
+                for o in Outcomes.by_application(self.instance.application)
+            )
+            self.fields["primary_outcomes"].choices = application_outcome_choices
+            self.fields["secondary_outcomes"].choices = application_outcome_choices
+
+    def get_changelog_message(self) -> str:
+        return f"{self.request.user} updated overview"
 
 
 class QAStatusForm(NimbusChangeLogFormMixin, forms.ModelForm):

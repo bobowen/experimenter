@@ -5,6 +5,7 @@ from experimenter.nimbus_ui_new.views import (
     NimbusExperimentDetailView,
     NimbusExperimentsCreateView,
     NimbusExperimentsListTableView,
+    OverviewUpdateView,
     QAStatusUpdateView,
     TakeawaysUpdateView,
 )
@@ -34,6 +35,11 @@ urlpatterns = [
         r"^(?P<slug>[\w-]+)/update_takeaways/$",
         TakeawaysUpdateView.as_view(),
         name="update-takeaways",
+    ),
+    re_path(
+        r"^(?P<slug>[\w-]+)/update_overview/$",
+        OverviewUpdateView.as_view(),
+        name="update-overview",
     ),
     re_path(
         r"^create/",

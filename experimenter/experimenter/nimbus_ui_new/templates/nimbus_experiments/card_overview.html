@@ -1,0 +1,82 @@
+{% load nimbus_extras %}
+
+    <!-- Overview Card -->
+    <form id="overview" class="card mb-3">
+      {% csrf_token %}
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h4>Overview</h4>
+          {{ errors }}
+
+          {% if edit %} 
+            <div>
+              <a 
+                class="btn btn-primary btn-sm me-2"
+                hx-post="{% url 'update-overview' experiment.slug %}"
+                hx-select="#overview"
+                hx-target="#overview"
+                hx-swap="outerHTML"
+              >Save</a>
+              <a 
+                class="btn btn-secondary btn-sm"
+                hx-get="{% url 'nimbus-new-detail' slug=experiment.slug %}"
+                hx-select="#overview"
+                hx-target="#overview"
+                hx-swap="outerHTML"
+              >
+                  Cancel
+              </a>
+            </div>
+          {% else %}
+            <a 
+              class="btn btn-outline-primary btn-sm"
+              hx-get="{% url 'update-overview' experiment.slug %}"
+              hx-target="#overview"
+              hx-swap="outerHTML"
+            >
+              Edit
+            </a>
+          {% endif %}
+        </div>
+        <div class="card-body p-0">
+          <div class="container">
+            <div class="row py-2 bg-body-tertiary">
+              <div class="col-md-2"><strong>Application</strong></div>
+              <div class="col-md-4">{{ application }}</div>
+              <div class="col-md-2"><strong>Experiment Owner</strong></div>
+              <div class="col-md-4">{{ owner }}</div>
+            </div>
+            <div class="row py-2">
+              <div class="col-md-2"><strong>Public Name</strong></div>
+              <div class="col-md-10">{{ name }}</div>
+            </div>
+            <div class="row py-2 bg-body-tertiary ">
+              <div class="col-md-2"><strong>Public Description</strong></div>
+              <div class="col-md-10">{{ public_description }}</div>
+            </div>
+            <div class="row py-2">
+              <div class="col-md-2"><strong>Hypothesis</strong></div>
+              <div class="col-md-10">{{ hypothesis }}</div>
+            </div>
+            <div class="row py-2 bg-body-tertiary ">
+              <div class="col-md-2"><strong>Primary Outcomes</strong></div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  {{ primary_outcomes }}
+                </div>
+              </div>
+              <div class="col-md-2"><strong>Secondary Outcomes</strong></div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  {{ secondary_outcomes }}
+                </div>
+              </div>
+            </div>
+            <div class="row py-2">
+              <div class="col-md-2"><strong>Team projects</strong></div>
+              <div class="col-md-4">{{ projects }}</div>
+              <div class="col-md-2"><strong>Subscribers</strong></div>
+              <div class="col-md-4">{{ subscribers }}</div>
+            </div>
+          </div>
+        </div>
+      </form>

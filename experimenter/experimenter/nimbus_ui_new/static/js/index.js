@@ -7,3 +7,14 @@ import "bootstrap";
 import "bootstrap-select";
 import "jquery";
 import "htmx.org";
+
+$(() => {
+    document.body.addEventListener("htmx:afterSwap", function () {
+        console.log($);
+        console.log($('.selectpicker'));
+        console.log($('.selectpicker').selectpicker);
+        $('.selectpicker').selectpicker();
+    });
+})
+
+  

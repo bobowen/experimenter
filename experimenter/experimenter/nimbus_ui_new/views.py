@@ -15,6 +15,7 @@ from experimenter.nimbus_ui_new.filtersets import (
 )
 from experimenter.nimbus_ui_new.forms import (
     NimbusExperimentCreateForm,
+    NimbusOverviewForm,
     QAStatusForm,
     TakeawaysForm,
 )
@@ -159,6 +160,16 @@ class TakeawaysUpdateView(RequestFormMixin, UpdateView):
         context["takeaways_edit_mode"] = True
         context["takeaways_form"] = form
         return self.render_to_response(context)
+
+    def get_success_url(self):
+        return reverse("nimbus-new-detail", kwargs={"slug": self.object.slug})
+
+
+class OverviewUpdateView(RequestFormMixin, UpdateView):
+    model = NimbusExperiment
+    form_class = NimbusOverviewForm
+    template_name = "nimbus_experiments/update_overview.html"
+    context_object_name = "experiment"
 
     def get_success_url(self):
         return reverse("nimbus-new-detail", kwargs={"slug": self.object.slug})
