@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mozilla-nimbus-schemas"
-version = "2024.9.3"
+version = "2024.10.1"
 description = "Schemas used by Mozilla Nimbus and related projects."
 authors = ["mikewilli"]
 license = "MPL 2.0"
@@ -11,6 +11,7 @@ packages = [{ include = "mozilla_nimbus_schemas" }]
 python = "^3.10"
 pydantic = "^2"
 polyfactory = "^2.7.2"
+typing-extensions = ">=4.0.1" # Required until Python 3.11
 
 [tool.poetry.group.dev.dependencies]
 ruff = ">=0.5.0,<0.6.2"
